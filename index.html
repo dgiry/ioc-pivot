@@ -455,6 +455,7 @@ const PLATFORMS = {
     { name:'GitHub Advisory',domain:'github.com',            cat:'osint',      url: v=>`https://github.com/advisories?query=${v}` },
     { name:'CIRCL CVE',      domain:'cve.circl.lu',          cat:'official',   url: v=>`https://cve.circl.lu/cve/${v}` },
     { name:'VulnCheck',      domain:'vulncheck.com',         cat:'exploit',    url: v=>`https://vulncheck.com/browse/cve?search=${v}` },
+    { name:'🔬 CVE Enricher', domain:'dgiry.github.io',      cat:'enrich',     url: v=>`https://dgiry.github.io/cve-enricher?cve=${v}` },
   ],
 };
 
@@ -467,6 +468,7 @@ const CAT_META = {
   official:   { label: 'Official',     cls: 'cat-official',   badge: 'cat-badge-official' },
   exploit:    { label: 'Exploit',      cls: 'cat-exploit',    badge: 'cat-badge-exploit' },
   email:      { label: 'Email',        cls: 'cat-email',      badge: 'cat-badge-email' },
+  enrich:     { label: '🔬 Enrich',   cls: 'cat-enrich',     badge: 'cat-badge-enrich' },
 };
 
 // ── Type display ────────────────────────────────────────────
