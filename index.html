@@ -443,7 +443,7 @@ const PLATFORMS = {
     { name:'HaveIBeenPwned',domain:'haveibeenpwned.com',  cat:'osint',      url: v=>`https://haveibeenpwned.com/account/${encodeURIComponent(v)}` },
     { name:'Hunter.io',     domain:'hunter.io',           cat:'osint',      url: v=>`https://hunter.io/email-verifier/${v}` },
     { name:'MXToolbox',     domain:'mxtoolbox.com',       cat:'email',      url: v=>`https://mxtoolbox.com/SuperTool.aspx?action=mx%3a${v.split('@')[1]}&run=toolpage` },
-    { name:'ThreatFox',     domain:'threatfox.abuse.ch',  cat:'intel',      url: v=>`https://threatfox.abuse.ch/browse.php?search=ioc%3A${v}` },
+    { name:'ThreatFox',     domain:'threatfox.abuse.ch',  cat:'intel',      url: v=>`https://threatfox.abuse.ch/browse.php?search=ioc%3A${encodeURIComponent(v)}` },
   ],
   cve: [
     { name:'NVD NIST',       domain:'nvd.nist.gov',          cat:'official',   url: v=>`https://nvd.nist.gov/vuln/detail/${v}` },
