@@ -310,8 +310,13 @@
       <button id="copy-btn" class="btn-secondary" style="display:none">
         <span>⎘</span> Copy IOC
       </button>
-      <div id="cat-filters" class="flex items-center gap-2 flex-wrap" style="display:none!important"></div>
+      <button id="copy-link-btn" class="btn-secondary" style="display:none">
+        <span>🔗</span> Copy link
+      </button>
     </div>
+
+    <!-- Category filters -->
+    <div id="cat-filters" class="flex items-center gap-2 flex-wrap mt-4" style="display:none"></div>
   </section>
 
   <!-- ── PLATFORM GRID ─────────────────────────────────────── -->
@@ -552,15 +557,35 @@ function renderGrid(det) {
   }).join('');
 }
 
+function renderFilters(det) {
+  const container = document.getElementById('cat-filters');
+  if (!det) { container.style.display = 'none'; return; }
+
+  const platforms = PLATFORMS[det.type] || [];
+  const cats = ['all', ...new Set(platforms.map(p => p.cat))];
+
+  container.style.display = 'flex';
+  container.innerHTML = cats.map(cat => {
+    const label = cat === 'all' ? `All (${platforms.length})` : CAT_META[cat]?.label || cat;
+    return `<button class="cat-tab ${activeFilter === cat ? 'active' : ''}" data-cat="${cat}">${label}</button>`;
+  }).join('');
+
+  container.querySelectorAll('.cat-tab').forEach(btn => {
+    btn.addEventListener('click', () => setFilter(btn.dataset.cat));
+  });
+}
+
 function renderActions(det) {
-  const openAll  = document.getElementById('open-all-btn');
-  const copyBtn  = document.getElementById('copy-btn');
-  const label    = document.getElementById('open-all-label');
+  const openAll    = document.getElementById('open-all-btn');
+  const copyBtn    = document.getElementById('copy-btn');
+  const copyLink   = document.getElementById('copy-link-btn');
+  const label      = document.getElementById('open-all-label');
 
   if (!det) {
     openAll.disabled = true;
     label.textContent = 'Open all platforms';
     copyBtn.style.display = 'none';
+    copyLink.style.display = 'none';
     return;
   }
   const platforms = PLATFORMS[det.type] || [];
@@ -568,6 +593,7 @@ function renderActions(det) {
   openAll.disabled = filtered.length === 0;
   label.textContent = `Open all ${filtered.length} platforms`;
   copyBtn.style.display = 'inline-flex';
+  copyLink.style.display = 'inline-flex';
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -587,11 +613,17 @@ function copyIOC() {
     .then(() => toast('IOC copied!'));
 }
 
+function copyLink() {
+  const raw = document.getElementById('ioc-input').value.trim();
+  const url = new URL('https://dgiry.github.io/ioc-pivot');
+  if (raw) url.searchParams.set('ioc', raw);
+  navigator.clipboard.writeText(url.toString())
+    .then(() => toast('Link copied!'));
+}
+
 function setFilter(cat) {
   activeFilter = cat;
-  document.querySelectorAll('.cat-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.cat === cat);
-  });
+  renderFilters(currentDetection);
   renderGrid(currentDetection);
   renderActions(currentDetection);
 }
@@ -625,6 +657,7 @@ function onInput() {
   activeFilter     = 'all';
 
   renderDetection(currentDetection);
+  renderFilters(currentDetection);
   renderGrid(currentDetection);
   renderActions(currentDetection);
 
@@ -647,6 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
   clearBtn.addEventListener('click', () => { input.value = ''; onInput(); input.focus(); });
   openAllBtn.addEventListener('click', openAll);
   copyBtn.addEventListener('click', copyIOC);
+  document.getElementById('copy-link-btn').addEventListener('click', copyLink);
 
   // Keyboard shortcut: Enter → open all
   input.addEventListener('keydown', e => {
