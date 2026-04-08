@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IOC Pivot Hub — Instant Threat Intelligence Pivoting</title>
-  <meta name="description" content="Paste any IOC and pivot to 30+ threat intelligence platforms in one click. IP, domain, hash, URL, email, CVE. Zero backend, zero API keys.">
-  <meta property="og:title" content="IOC Pivot Hub — Instant Threat Intel Pivoting">
-  <meta property="og:description" content="Paste any IOC. Pivot to VirusTotal, Shodan, AbuseIPDB, GreyNoise and 30+ platforms in one click. 100% client-side.">
+  <title>IOC Pivot Hub — Paste one IOC. Open the right pivots instantly.</title>
+  <meta name="description" content="IOC Pivot Hub detects the indicator type, refangs defanged input, and opens the most useful investigation platforms in one place. 30+ platforms, zero API keys.">
+  <meta property="og:title" content="IOC Pivot Hub — Paste one IOC. Open the right pivots instantly.">
+  <meta property="og:description" content="Detects IP, domain, hash, URL, email, CVE. Refangs defanged input. Opens VirusTotal, Shodan, AbuseIPDB and 30+ platforms. 100% client-side.">`
   <meta property="og:url" content="https://dgiry.github.io/ioc-pivot/landing.html">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -218,16 +218,16 @@
         <div class="flex-1 text-center lg:text-left">
           <div class="fade-up-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/20 bg-cyan-400/5 text-xs font-semibold text-cyan-400 mb-6">
             <span class="w-1.5 h-1.5 rounded-full bg-cyan-400" style="animation:pulse-dot 2s infinite"></span>
-            30+ threat intel platforms · Zero API keys
+            30+ platforms · 6 IOC types · 100% client-side · No API keys
           </div>
 
           <h1 class="fade-up-2 text-5xl lg:text-6xl font-black text-white leading-[1.08] tracking-tight mb-6">
-            One IOC.<br>
-            <span class="shimmer-text">Instant intel.</span>
+            Paste one IOC.<br>
+            <span class="shimmer-text">Open the right pivots.</span>
           </h1>
 
           <p class="fade-up-3 text-lg text-slate-400 leading-7 mb-8 max-w-xl mx-auto lg:mx-0">
-            Paste any indicator of compromise — IP, domain, hash, URL, email or CVE — and pivot to every major threat intelligence platform in a single click.
+            IOC Pivot Hub detects the indicator type, refangs defanged input, and opens the most useful investigation platforms in one place.
             <span class="text-slate-300 font-medium"> No account. No API key. Nothing leaves your browser.</span>
           </p>
 
@@ -308,8 +308,8 @@
           <div class="text-sm text-slate-500 mt-1">API keys required</div>
         </div>
         <div>
-          <div class="stat-num">0ms</div>
-          <div class="text-sm text-slate-500 mt-1">Backend latency</div>
+          <div class="stat-num" style="font-size:1.8rem">Instant</div>
+          <div class="text-sm text-slate-500 mt-1">Lookup routing</div>
         </div>
       </div>
     </div>
@@ -327,8 +327,8 @@
       <div class="flex-1 card card-glow p-8 text-center">
         <div class="w-14 h-14 rounded-2xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center text-2xl mx-auto mb-5">📋</div>
         <div class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-3">Step 1</div>
-        <h3 class="text-lg font-bold text-white mb-3">Paste any IOC</h3>
-        <p class="text-sm text-slate-400 leading-6">IP, domain, URL, MD5/SHA1/SHA256, email or CVE. Defanged input (<code class="text-cyan-300 bg-white/5 px-1 rounded">185[.]x[.]x[.]x</code>) is automatically normalized.</p>
+        <h3 class="text-lg font-bold text-white mb-3">Paste an IOC</h3>
+        <p class="text-sm text-slate-400 leading-6">IP, domain, URL, hash, email or CVE. Defanged input (<code class="text-cyan-300 bg-white/5 px-1 rounded">185[.]x[.]x[.]x</code>) is automatically normalized before pivoting.</p>
       </div>
 
       <div class="hidden md:flex items-center self-center px-2 pt-4">
@@ -341,8 +341,8 @@
       <div class="flex-1 card card-glow p-8 text-center mt-4 md:mt-0">
         <div class="w-14 h-14 rounded-2xl bg-violet-400/10 border border-violet-400/20 flex items-center justify-center text-2xl mx-auto mb-5">⚡</div>
         <div class="text-xs font-bold uppercase tracking-widest text-violet-400 mb-3">Step 2</div>
-        <h3 class="text-lg font-bold text-white mb-3">Instant detection</h3>
-        <p class="text-sm text-slate-400 leading-6">Type is identified in real-time. Relevant platforms are surfaced immediately, filtered by what makes sense for that IOC type.</p>
+        <h3 class="text-lg font-bold text-white mb-3">Auto-detect and normalize</h3>
+        <p class="text-sm text-slate-400 leading-6">The tool detects the type instantly and automatically refangs supported input when needed. No manual selection, no extra steps.</p>
       </div>
 
       <div class="hidden md:flex items-center self-center px-2 pt-4">
@@ -355,8 +355,8 @@
       <div class="flex-1 card card-glow p-8 text-center mt-4 md:mt-0">
         <div class="w-14 h-14 rounded-2xl bg-green-400/10 border border-green-400/20 flex items-center justify-center text-2xl mx-auto mb-5">🚀</div>
         <div class="text-xs font-bold uppercase tracking-widest text-green-400 mb-3">Step 3</div>
-        <h3 class="text-lg font-bold text-white mb-3">Pivot everywhere</h3>
-        <p class="text-sm text-slate-400 leading-6">Open all platforms with one click, or filter by category — Reputation, OSINT, Threat Intel, Sandbox, Exploit. Every link is pre-built and correct.</p>
+        <h3 class="text-lg font-bold text-white mb-3">Open the right pivots</h3>
+        <p class="text-sm text-slate-400 leading-6">Launch the most relevant platforms instantly — one by one or all at once. Filter by Reputation, OSINT, Threat Intel, Sandbox or Exploit to focus your investigation.</p>
       </div>
     </div>
   </section>
@@ -366,8 +366,8 @@
     <div class="mx-auto max-w-6xl px-6 py-20">
       <div class="text-center mb-14">
         <p class="text-xs font-semibold uppercase tracking-[.2em] text-cyan-400 mb-3">Coverage</p>
-        <h2 class="text-3xl font-bold text-white mb-4">Every platform that matters</h2>
-        <p class="text-slate-400 text-sm max-w-xl mx-auto">Platforms are filtered per IOC type — no irrelevant links, no noise. Each card opens directly on the right page.</p>
+        <h2 class="text-3xl font-bold text-white mb-4">Built with the pivots analysts actually use</h2>
+        <p class="text-slate-400 text-sm max-w-xl mx-auto">Switch by IOC type to see the platforms available for each investigation path. No irrelevant links, no noise.</p>
       </div>
 
       <!-- IOC type selector -->
@@ -390,45 +390,45 @@
     <div class="mx-auto max-w-6xl px-6 py-20">
       <div class="text-center mb-14">
         <p class="text-xs font-semibold uppercase tracking-[.2em] text-cyan-400 mb-3">Built for analysts</p>
-        <h2 class="text-3xl font-bold text-white">Every detail counts in an incident</h2>
+        <h2 class="text-3xl font-bold text-white">Core features</h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
         <div class="card p-7">
           <div class="text-2xl mb-4">🧠</div>
-          <h3 class="font-bold text-white mb-2">Smart auto-detection</h3>
-          <p class="text-sm text-slate-400 leading-6">Identifies IP, domain, URL, MD5, SHA1, SHA256, email and CVE instantly. No dropdown, no type selection — just paste and go.</p>
+          <h3 class="font-bold text-white mb-2">Auto-detect</h3>
+          <p class="text-sm text-slate-400 leading-6">Recognizes the indicator type instantly — IP, domain, URL, MD5, SHA1, SHA256, email or CVE. No dropdown, no manual selection.</p>
         </div>
 
         <div class="card p-7">
           <div class="text-2xl mb-4">⚡</div>
-          <h3 class="font-bold text-white mb-2">Defang-aware input</h3>
-          <p class="text-sm text-slate-400 leading-6">Paste directly from threat reports. <code class="text-amber-300 bg-white/5 px-1 rounded">hxxps://</code>, <code class="text-amber-300 bg-white/5 px-1 rounded">evil[.]ru</code>, <code class="text-amber-300 bg-white/5 px-1 rounded">185[.]x[.]x[.]x</code> — all auto-refanged before pivoting.</p>
+          <h3 class="font-bold text-white mb-2">Defang-aware</h3>
+          <p class="text-sm text-slate-400 leading-6">Handles defanged input and restores usable pivots automatically. Paste <code class="text-amber-300 bg-white/5 px-1 rounded">hxxps://</code> or <code class="text-amber-300 bg-white/5 px-1 rounded">evil[.]ru</code> directly from reports.</p>
         </div>
 
         <div class="card p-7">
           <div class="text-2xl mb-4">🎯</div>
           <h3 class="font-bold text-white mb-2">Category filters</h3>
-          <p class="text-sm text-slate-400 leading-6">Filter platforms by Reputation, OSINT, Threat Intel, Sandbox or Exploit. Open only what you need for the current workflow.</p>
+          <p class="text-sm text-slate-400 leading-6">Filter platforms by Reputation, OSINT, or Threat Intel. Open only what matters for the current investigation step.</p>
         </div>
 
         <div class="card p-7">
           <div class="text-2xl mb-4">🔗</div>
           <h3 class="font-bold text-white mb-2">Shareable links</h3>
-          <p class="text-sm text-slate-400 leading-6">Every pivot is shareable. Copy a <code class="text-cyan-300 bg-white/5 px-1 rounded">?ioc=</code> link and send it to your team — they land with the same context instantly.</p>
+          <p class="text-sm text-slate-400 leading-6">Use <code class="text-cyan-300 bg-white/5 px-1 rounded">?ioc=</code> links to share a pivot-ready IOC instantly. Your team lands with the same context in one click.</p>
         </div>
 
         <div class="card p-7">
           <div class="text-2xl mb-4">🔒</div>
-          <h3 class="font-bold text-white mb-2">Zero data leakage</h3>
-          <p class="text-sm text-slate-400 leading-6">100% client-side. No backend, no analytics, no logging. IOCs never leave your browser until you explicitly open a platform.</p>
+          <h3 class="font-bold text-white mb-2">Zero leak design</h3>
+          <p class="text-sm text-slate-400 leading-6">Runs client-side with no built-in telemetry. IOCs never leave your browser until you explicitly open a platform tab.</p>
         </div>
 
         <div class="card p-7">
           <div class="text-2xl mb-4">🔬</div>
-          <h3 class="font-bold text-white mb-2">Pairs with Defang IOC</h3>
-          <p class="text-sm text-slate-400 leading-6">Extract IOCs from a threat report with <a href="https://dgiry.github.io/defang-ioc" class="text-cyan-400 hover:underline">Defang IOC</a>, then pivot each one here. Two tools, one seamless workflow.</p>
+          <h3 class="font-bold text-white mb-2">Works with Defang IOC</h3>
+          <p class="text-sm text-slate-400 leading-6">Move directly from extraction to pivoting in one workflow. Use <a href="https://dgiry.github.io/defang-ioc" class="text-cyan-400 hover:underline">Defang IOC</a> to extract, then pivot each indicator here.</p>
         </div>
 
       </div>
@@ -440,7 +440,7 @@
     <div class="mx-auto max-w-6xl px-6 py-20">
       <div class="text-center mb-14">
         <p class="text-xs font-semibold uppercase tracking-[.2em] text-cyan-400 mb-3">Use cases</p>
-        <h2 class="text-3xl font-bold text-white">Built for every security role</h2>
+        <h2 class="text-3xl font-bold text-white">Who it helps</h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -448,32 +448,32 @@
         <div class="card p-8 flex gap-6">
           <div class="w-12 h-12 rounded-xl bg-blue-400/10 border border-blue-400/15 flex items-center justify-center text-xl shrink-0">🛡</div>
           <div>
-            <h3 class="font-bold text-white mb-2">SOC Analyst — Alert triage</h3>
-            <p class="text-sm text-slate-400 leading-6">A SIEM alert fires on <code class="text-cyan-300">185.220.101.45</code>. Paste it here, open Shodan + AbuseIPDB + GreyNoise in parallel, correlate reputation in 30 seconds instead of 5 minutes.</p>
+            <h3 class="font-bold text-white mb-2">SOC Analyst</h3>
+            <p class="text-sm text-slate-400 leading-6">Pivot an IP or domain from an alert into reputation and intel platforms in seconds. Correlate across Shodan, AbuseIPDB and GreyNoise in parallel — not one tab at a time.</p>
           </div>
         </div>
 
         <div class="card p-8 flex gap-6">
           <div class="w-12 h-12 rounded-xl bg-purple-400/10 border border-purple-400/15 flex items-center justify-center text-xl shrink-0">🕵️</div>
           <div>
-            <h3 class="font-bold text-white mb-2">Threat Hunter — IOC enrichment</h3>
-            <p class="text-sm text-slate-400 leading-6">You extracted 20 IOCs from a threat report using Defang IOC. For each one, pivot here to cross-reference across OTX, ThreatFox and URLscan in one shot.</p>
+            <h3 class="font-bold text-white mb-2">Threat Hunter</h3>
+            <p class="text-sm text-slate-400 leading-6">Move from a suspicious indicator to multiple enrichment sources without manual tab hunting. Cross-reference across OTX, ThreatFox and URLscan in one shot.</p>
           </div>
         </div>
 
         <div class="card p-8 flex gap-6">
           <div class="w-12 h-12 rounded-xl bg-red-400/10 border border-red-400/15 flex items-center justify-center text-xl shrink-0">🚨</div>
           <div>
-            <h3 class="font-bold text-white mb-2">Incident Responder — Active IR</h3>
-            <p class="text-sm text-slate-400 leading-6">During a live incident, seconds matter. Paste suspicious hashes directly from your EDR, open VirusTotal + Hybrid Analysis + MalwareBazaar simultaneously, no tab juggling.</p>
+            <h3 class="font-bold text-white mb-2">Incident Responder</h3>
+            <p class="text-sm text-slate-400 leading-6">Validate malicious infrastructure and related artefacts during triage. Paste hashes directly from your EDR — VirusTotal, Hybrid Analysis and MalwareBazaar open simultaneously.</p>
           </div>
         </div>
 
         <div class="card p-8 flex gap-6">
           <div class="w-12 h-12 rounded-xl bg-amber-400/10 border border-amber-400/15 flex items-center justify-center text-xl shrink-0">📋</div>
           <div>
-            <h3 class="font-bold text-white mb-2">Vuln Manager — CVE triage</h3>
-            <p class="text-sm text-slate-400 leading-6">Got a CVE from a vendor advisory? Pivot it to NVD, Exploit-DB, AttackerKB and Tenable simultaneously. Know if it's exploited in the wild before your next standup.</p>
+            <h3 class="font-bold text-white mb-2">Vulnerability Manager</h3>
+            <p class="text-sm text-slate-400 leading-6">Open NVD, Exploit-DB, AttackerKB and Tenable references from a CVE in one place. Know if it's actively exploited in the wild before your next standup.</p>
           </div>
         </div>
 
@@ -484,7 +484,9 @@
   <!-- ── WORKFLOW CONNECTOR ────────────────────────────────── -->
   <section class="border-t border-white/6">
     <div class="mx-auto max-w-4xl px-6 py-16 text-center">
-      <p class="text-xs font-semibold uppercase tracking-[.2em] text-slate-500 mb-8">Analyst workflow</p>
+      <p class="text-xs font-semibold uppercase tracking-[.2em] text-cyan-400 mb-3">Analyst workflow</p>
+      <h2 class="text-3xl font-bold text-white mb-3">Part of a practical analyst workflow</h2>
+      <p class="text-slate-500 text-sm mb-10">Extract and clean indicators first, then pivot fast into the platforms that matter.</p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <a href="https://dgiry.github.io/defang-ioc" target="_blank" rel="noopener"
            class="card p-6 flex items-center gap-4 hover:border-cyan-400/30 transition w-full sm:w-auto">
@@ -514,18 +516,53 @@
     </div>
   </section>
 
+  <!-- ── TRUST ────────────────────────────────────────────── -->
+  <section class="border-t border-white/6 bg-white/1">
+    <div class="mx-auto max-w-4xl px-6 py-16 text-center">
+      <p class="text-xs font-semibold uppercase tracking-[.2em] text-cyan-400 mb-3">Open source & frictionless</p>
+      <h2 class="text-3xl font-bold text-white mb-10">Built for trust by design</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div class="card p-5 flex flex-col items-center gap-2 text-center">
+          <span class="text-2xl">🖥</span>
+          <span class="text-sm font-semibold text-white">100% client-side</span>
+          <span class="text-xs text-slate-500">Runs entirely in your browser</span>
+        </div>
+        <div class="card p-5 flex flex-col items-center gap-2 text-center">
+          <span class="text-2xl">🔑</span>
+          <span class="text-sm font-semibold text-white">No API keys</span>
+          <span class="text-xs text-slate-500">No credentials required</span>
+        </div>
+        <div class="card p-5 flex flex-col items-center gap-2 text-center">
+          <span class="text-2xl">👤</span>
+          <span class="text-sm font-semibold text-white">No account</span>
+          <span class="text-xs text-slate-500">Open and use instantly</span>
+        </div>
+        <div class="card p-5 flex flex-col items-center gap-2 text-center">
+          <span class="text-2xl">🚀</span>
+          <span class="text-sm font-semibold text-white">Self-hostable</span>
+          <span class="text-xs text-slate-500">Single HTML file, anywhere</span>
+        </div>
+        <div class="card p-5 flex flex-col items-center gap-2 text-center">
+          <span class="text-2xl">⚡</span>
+          <span class="text-sm font-semibold text-white">Works instantly</span>
+          <span class="text-xs text-slate-500">No setup, no config</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ── CTA ──────────────────────────────────────────────── -->
   <section class="border-t border-white/6 bg-white/1">
     <div class="mx-auto max-w-3xl px-6 py-20 text-center">
       <div class="blob w-[400px] h-[300px] bg-cyan-500/6 top-0 left-1/2 -translate-x-1/2 absolute pointer-events-none"></div>
-      <h2 class="text-4xl font-black text-white mb-4">Ready to pivot?</h2>
-      <p class="text-slate-400 mb-10 text-lg">No setup. No account. Open the tool and paste your first IOC.</p>
+      <h2 class="text-4xl font-black text-white mb-4">Move faster from indicator to investigation</h2>
+      <p class="text-slate-400 mb-10 text-lg max-w-xl mx-auto">Use IOC Pivot Hub to open the right pivots, reduce friction, and speed up analyst workflows.</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="index.html" class="btn-cta text-lg px-10 py-4">
-          <span>🔭</span> Open IOC Pivot Hub
+          <span>🔭</span> Try the live tool
         </a>
         <a href="https://github.com/dgiry/ioc-pivot" target="_blank" rel="noopener" class="btn-ghost text-base px-8 py-4">
-          ⭐ Star on GitHub
+          ⭐ Explore on GitHub
         </a>
       </div>
     </div>
@@ -539,9 +576,10 @@
         <span class="text-sm text-slate-500">IOC Pivot Hub — open source, MIT license</span>
       </div>
       <div class="flex items-center gap-6 text-sm text-slate-600">
-        <a href="index.html" class="hover:text-white transition">Tool</a>
+        <a href="index.html" class="hover:text-white transition">Live tool</a>
         <a href="https://github.com/dgiry/ioc-pivot" target="_blank" rel="noopener" class="hover:text-white transition">GitHub</a>
         <a href="https://dgiry.github.io/defang-ioc" target="_blank" rel="noopener" class="hover:text-cyan-400 transition">🔬 Defang IOC</a>
+        <span class="text-slate-700">MIT License</span>
       </div>
     </div>
   </footer>
