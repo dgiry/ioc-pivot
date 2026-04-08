@@ -6,6 +6,14 @@
 
 ---
 
+## Screenshots
+
+| IP Address | CVE |
+|-----------|-----|
+| ![IP pivot](docs/screenshot-ip.png) | ![CVE pivot](docs/screenshot-cve.png) |
+
+---
+
 ## What it does
 
 Paste a single IOC and get one-click links to every major threat intel platform — no API keys, no account, no data sent anywhere. 100% client-side.
