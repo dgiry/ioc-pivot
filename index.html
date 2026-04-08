@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IOC Pivot Hub — Instant Threat Intel Links</title>
+  <meta name="description" content="Paste any IOC — IP, domain, URL, hash, email or CVE — and pivot instantly to VirusTotal, Shodan, AbuseIPDB, GreyNoise and 30+ threat intel platforms.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #020617;
+      color: #e2e8f0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Animations ─────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(.9); opacity: .6; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .fade-up { animation: fadeUp .3s cubic-bezier(.16,1,.3,1) both; }
+
+    /* ── Background grid ────────────────────────────────── */
+    .bg-grid {
+      background-image:
+        linear-gradient(rgba(34,211,238,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,211,238,.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* ── Input ──────────────────────────────────────────── */
+    #ioc-input {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 14px;
+      color: #e2e8f0;
+      font-family: 'Inter', monospace;
+      font-size: 15px;
+      padding: 14px 44px 14px 16px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    #ioc-input:focus {
+      border-color: rgba(34,211,238,.5);
+      box-shadow: 0 0 0 3px rgba(34,211,238,.08);
+    }
+    #ioc-input::placeholder { color: #334155; }
+
+    /* ── Type badge ─────────────────────────────────────── */
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    /* ── Platform card ──────────────────────────────────── */
+    .platform-card {
+      position: relative;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background .15s, border-color .15s, transform .15s;
+      cursor: default;
+      overflow: hidden;
+      animation: fadeUp .25s cubic-bezier(.16,1,.3,1) both;
+    }
+    .platform-card:hover {
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.14);
+      transform: translateY(-1px);
+    }
+    .platform-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      border-radius: 14px 0 0 14px;
+    }
+
+    /* Category left-border colors */
+    .cat-reputation::before { background: rgba(96,165,250,.7); }
+    .cat-osint::before       { background: rgba(167,139,250,.7); }
+    .cat-intel::before       { background: rgba(251,146,60,.7); }
+    .cat-sandbox::before     { background: rgba(74,222,128,.7); }
+    .cat-official::before    { background: rgba(148,163,184,.7); }
+    .cat-exploit::before     { background: rgba(248,113,113,.7); }
+    .cat-email::before       { background: rgba(250,204,21,.7); }
+
+    .platform-favicon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.06);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      overflow: hidden;
+    }
+    .platform-favicon img { width: 20px; height: 20px; object-fit: contain; }
+
+    .platform-name { font-size: 13px; font-weight: 600; color: #f1f5f9; }
+    .platform-cat  {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      letter-spacing: .03em;
+    }
+    .cat-badge-reputation { background: rgba(96,165,250,.15);  color: #93c5fd; }
+    .cat-badge-osint      { background: rgba(167,139,250,.15); color: #c4b5fd; }
+    .cat-badge-intel      { background: rgba(251,146,60,.15);  color: #fdba74; }
+    .cat-badge-sandbox    { background: rgba(74,222,128,.15);  color: #86efac; }
+    .cat-badge-official   { background: rgba(148,163,184,.15); color: #cbd5e1; }
+    .cat-badge-exploit    { background: rgba(248,113,113,.15); color: #fca5a5; }
+    .cat-badge-email      { background: rgba(250,204,21,.15);  color: #fde047; }
+
+    .open-btn {
+      margin-left: auto;
+      flex-shrink: 0;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #94a3b8;
+      border-radius: 8px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background .15s, color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .open-btn:hover {
+      background: rgba(34,211,238,.12);
+      border-color: rgba(34,211,238,.3);
+      color: #67e8f9;
+    }
+
+    /* ── Open-all button ────────────────────────────────── */
+    .btn-open-all {
+      background: linear-gradient(135deg, #22d3ee, #818cf8);
+      color: #020617;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-open-all:hover   { opacity: .9; transform: scale(1.02); }
+    .btn-open-all:disabled { opacity: .3; cursor: default; transform: none; }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #64748b;
+      border-radius: 10px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,.09); color: #e2e8f0; }
+
+    /* ── Cat filter tabs ─────────────────────────────────── */
+    .cat-tab {
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: #475569;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .cat-tab:hover  { color: #94a3b8; border-color: rgba(255,255,255,.15); }
+    .cat-tab.active { background: rgba(34,211,238,.12); border-color: rgba(34,211,238,.3); color: #67e8f9; }
+
+    /* ── Toast ──────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1e293b;
+      border: 1px solid rgba(34,211,238,.25);
+      color: #67e8f9;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: all .2s;
+      pointer-events: none;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Empty state ────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: #334155;
+    }
+    .empty-glow {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34,211,238,.1), transparent 70%);
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+    }
+  </style>
+</head>
+<body class="bg-grid">
+
+  <!-- ── HEADER ──────────────────────────────────────────── -->
+  <header class="border-b border-white/6 bg-[#020617]/80 backdrop-blur sticky top-0 z-50">
+    <div class="mx-auto max-w-5xl px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">🔭</span>
+        <div>
+          <span class="font-bold text-white text-sm">IOC Pivot Hub</span>
+          <span class="ml-2 text-xs text-slate-500 hidden sm:inline">30+ threat intel platforms in one click</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://dgiry.github.io/defang-ioc" target="_blank" rel="noopener"
+           class="text-xs text-slate-500 hover:text-cyan-400 transition hidden sm:block">
+          🔬 Defang IOC →
+        </a>
+        <a href="https://github.com/dgiry/ioc-pivot" target="_blank" rel="noopener"
+           class="text-xs text-slate-500 hover:text-white transition">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── HERO / INPUT ─────────────────────────────────────── -->
+  <section class="mx-auto max-w-3xl px-6 pt-14 pb-8">
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-bold text-white mb-3">
+        Paste an IOC, pivot everywhere
+      </h1>
+      <p class="text-slate-400 text-sm leading-6">
+        IP · Domain · URL · MD5/SHA1/SHA256 · Email · CVE<br>
+        Defanged input auto-refanged · Zero data sent · 100% client-side
+      </p>
+    </div>
+
+    <!-- Input -->
+    <div class="relative mb-3">
+      <input
+        id="ioc-input"
+        type="text"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        placeholder="185.220.101.45  ·  evil[.]ru  ·  CVE-2024-21887  ·  hxxps://malware[.]io/drop"
+      />
+      <button id="clear-btn"
+        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-300 text-lg transition hidden"
+        title="Clear">×</button>
+    </div>
+
+    <!-- Detected type + refang notice -->
+    <div class="flex items-center gap-3 min-h-[28px] mb-6" id="detection-row">
+      <span class="text-xs text-slate-600">Paste any IOC above to get pivot links</span>
+    </div>
+
+    <!-- Action bar -->
+    <div class="flex items-center gap-3 flex-wrap">
+      <button id="open-all-btn" class="btn-open-all" disabled>
+        <span>↗</span> <span id="open-all-label">Open all platforms</span>
+      </button>
+      <button id="copy-btn" class="btn-secondary" style="display:none">
+        <span>⎘</span> Copy IOC
+      </button>
+      <div id="cat-filters" class="flex items-center gap-2 flex-wrap" style="display:none!important"></div>
+    </div>
+  </section>
+
+  <!-- ── PLATFORM GRID ─────────────────────────────────────── -->
+  <section class="mx-auto max-w-5xl px-6 pb-20" id="grid-section">
+    <div id="platform-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <!-- Empty state -->
+      <div class="col-span-full empty-state">
+        <div class="empty-glow">🔭</div>
+        <p class="text-sm font-medium text-slate-500 mb-1">No IOC yet</p>
+        <p class="text-xs text-slate-600">Paste an IP, domain, hash, URL, email or CVE above</p>
+        <div class="mt-6 flex flex-wrap justify-center gap-2">
+          <button class="example-btn cat-tab" data-val="185.220.101.45">185.220.101.45</button>
+          <button class="example-btn cat-tab" data-val="evil.ru">evil.ru</button>
+          <button class="example-btn cat-tab" data-val="CVE-2024-21887">CVE-2024-21887</button>
+          <button class="example-btn cat-tab" data-val="44d88612fea8a8f36de82e1278abb02f">MD5 hash</button>
+          <button class="example-btn cat-tab" data-val="attacker@phish.net">attacker@phish.net</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TOAST ────────────────────────────────────────────── -->
+  <div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DETECTION PATTERNS
+// ═══════════════════════════════════════════════════════════
+const RX = {
+  ip:         /^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$/,
+  ip_d:       /^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\[\.\]){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$/,
+  url:        /^https?:\/\/.+/i,
+  url_d:      /^hxx[pt]+s?:\/\/.+/i,
+  email:      /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/,
+  email_d:    /^[a-zA-Z0-9._%+\-]+\[@\][a-zA-Z0-9.\-]+\[\.\][a-zA-Z]{2,}$/,
+  sha256:     /^[a-fA-F0-9]{64}$/,
+  sha1:       /^[a-fA-F0-9]{40}$/,
+  md5:        /^[a-fA-F0-9]{32}$/,
+  cve:        /^CVE-\d{4}-\d{4,}$/i,
+  domain_d:   /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\[\.\])+[a-zA-Z]{2,}$/i,
+  domain:     /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/,
+};
+
+// ── Refang ─────────────────────────────────────────────────
+function refang(raw) {
+  return raw
+    .replace(/hxx([pt]+)/gi, 'htt$1')
+    .replace(/\[@\]/g, '@')
+    .replace(/\[\.\]/g, '.');
+}
+
+// ── Detect type ────────────────────────────────────────────
+function detect(raw) {
+  const v = raw.trim();
+  const clean = refang(v);
+  let defanged = clean !== v;
+
+  if (RX.ip.test(clean) || RX.ip_d.test(v))           return { type: 'ip',     value: clean, defanged };
+  if (RX.cve.test(v))                                  return { type: 'cve',    value: v.toUpperCase(), defanged: false };
+  if (RX.sha256.test(v))                               return { type: 'hash',   value: v.toLowerCase(), defanged: false, sub: 'sha256' };
+  if (RX.sha1.test(v))                                 return { type: 'hash',   value: v.toLowerCase(), defanged: false, sub: 'sha1' };
+  if (RX.md5.test(v))                                  return { type: 'hash',   value: v.toLowerCase(), defanged: false, sub: 'md5' };
+  if (RX.url.test(clean) || RX.url_d.test(v))         return { type: 'url',    value: clean, defanged };
+  if (RX.email.test(clean) || RX.email_d.test(v))     return { type: 'email',  value: clean, defanged };
+  if (RX.domain.test(clean) || RX.domain_d.test(v))   return { type: 'domain', value: clean, defanged };
+
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PLATFORM DEFINITIONS
+// ═══════════════════════════════════════════════════════════
+function vtUrlId(url) {
+  try { return btoa(url).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+  catch(e) { return encodeURIComponent(url); }
+}
+
+const PLATFORMS = {
+  ip: [
+    { name:'VirusTotal',    domain:'virustotal.com',         cat:'reputation', url: v=>`https://www.virustotal.com/gui/ip-address/${v}` },
+    { name:'Shodan',        domain:'shodan.io',              cat:'osint',      url: v=>`https://www.shodan.io/host/${v}` },
+    { name:'AbuseIPDB',     domain:'abuseipdb.com',          cat:'reputation', url: v=>`https://www.abuseipdb.com/check/${v}` },
+    { name:'GreyNoise',     domain:'greynoise.io',           cat:'reputation', url: v=>`https://viz.greynoise.io/ip/${v}` },
+    { name:'Censys',        domain:'censys.io',              cat:'osint',      url: v=>`https://search.censys.io/hosts/${v}` },
+    { name:'IPinfo',        domain:'ipinfo.io',              cat:'osint',      url: v=>`https://ipinfo.io/${v}` },
+    { name:'Talos Intel',   domain:'talosintelligence.com',  cat:'reputation', url: v=>`https://talosintelligence.com/reputation_center/lookup?search=${v}` },
+    { name:'OTX AlienVault',domain:'otx.alienvault.com',    cat:'intel',      url: v=>`https://otx.alienvault.com/indicator/ip/${v}` },
+    { name:'ThreatFox',     domain:'threatfox.abuse.ch',     cat:'intel',      url: v=>`https://threatfox.abuse.ch/browse.php?search=ioc%3A${v}` },
+    { name:'BGP.he.net',    domain:'bgp.he.net',             cat:'osint',      url: v=>`https://bgp.he.net/ip/${v}` },
+  ],
+  domain: [
+    { name:'VirusTotal',    domain:'virustotal.com',         cat:'reputation', url: v=>`https://www.virustotal.com/gui/domain/${v}` },
+    { name:'URLscan.io',    domain:'urlscan.io',             cat:'osint',      url: v=>`https://urlscan.io/search/#domain%3A${v}` },
+    { name:'Shodan',        domain:'shodan.io',              cat:'osint',      url: v=>`https://www.shodan.io/search?query=hostname%3A${v}` },
+    { name:'Talos Intel',   domain:'talosintelligence.com',  cat:'reputation', url: v=>`https://talosintelligence.com/reputation_center/lookup?search=${v}` },
+    { name:'OTX AlienVault',domain:'otx.alienvault.com',    cat:'intel',      url: v=>`https://otx.alienvault.com/indicator/domain/${v}` },
+    { name:'ThreatFox',     domain:'threatfox.abuse.ch',     cat:'intel',      url: v=>`https://threatfox.abuse.ch/browse.php?search=ioc%3A${v}` },
+    { name:'Censys',        domain:'censys.io',              cat:'osint',      url: v=>`https://search.censys.io/certificates?q=${v}` },
+    { name:'Whois',         domain:'who.is',                 cat:'osint',      url: v=>`https://who.is/whois/${v}` },
+    { name:'MXToolbox',     domain:'mxtoolbox.com',          cat:'reputation', url: v=>`https://mxtoolbox.com/SuperTool.aspx?action=blacklist%3a${v}&run=toolpage` },
+    { name:'BGP.he.net',    domain:'bgp.he.net',             cat:'osint',      url: v=>`https://bgp.he.net/dns/${v}` },
+  ],
+  url: [
+    { name:'VirusTotal',        domain:'virustotal.com',        cat:'reputation', url: v=>`https://www.virustotal.com/gui/url/${vtUrlId(v)}` },
+    { name:'URLscan.io',        domain:'urlscan.io',            cat:'osint',      url: v=>`https://urlscan.io/search/#page.url%3A"${encodeURIComponent(v)}"` },
+    { name:'URLhaus',           domain:'urlhaus.abuse.ch',      cat:'intel',      url: v=>`https://urlhaus.abuse.ch/browse.php?search=${encodeURIComponent(v)}` },
+    { name:'Talos Intel',       domain:'talosintelligence.com', cat:'reputation', url: v=>`https://talosintelligence.com/reputation_center/lookup?search=${encodeURIComponent(v)}` },
+    { name:'OTX AlienVault',    domain:'otx.alienvault.com',    cat:'intel',      url: v=>`https://otx.alienvault.com/indicator/url/${encodeURIComponent(v)}` },
+    { name:'Google Safe Browse',domain:'safebrowsing.google.com',cat:'reputation',url: v=>`https://transparencyreport.google.com/safe-browsing/search?url=${encodeURIComponent(v)}` },
+  ],
+  hash: [
+    { name:'VirusTotal',      domain:'virustotal.com',       cat:'reputation', url: v=>`https://www.virustotal.com/gui/file/${v}` },
+    { name:'MalwareBazaar',   domain:'bazaar.abuse.ch',      cat:'intel',      url: (v,s)=>`https://bazaar.abuse.ch/browse.php?search=${s==='md5'?'md5':'sha256'}%3A${v}` },
+    { name:'Hybrid Analysis', domain:'hybrid-analysis.com',  cat:'sandbox',    url: v=>`https://www.hybrid-analysis.com/search?query=${v}` },
+    { name:'Any.run',         domain:'any.run',              cat:'sandbox',    url: v=>`https://app.any.run/submissions#filehash:${v}` },
+    { name:'ThreatFox',       domain:'threatfox.abuse.ch',   cat:'intel',      url: v=>`https://threatfox.abuse.ch/browse.php?search=ioc%3A${v}` },
+    { name:'OTX AlienVault',  domain:'otx.alienvault.com',   cat:'intel',      url: v=>`https://otx.alienvault.com/indicator/file/${v}` },
+    { name:'MalShare',        domain:'malshare.com',         cat:'sandbox',    url: v=>`https://malshare.com/search.php?query=${v}` },
+    { name:'Talos Intel',     domain:'talosintelligence.com',cat:'reputation', url: v=>`https://talosintelligence.com/talos_file_reputation?disposition=Unknown&sort=SHA_256&order=DESC&search=${v}` },
+  ],
+  email: [
+    { name:'VirusTotal',    domain:'virustotal.com',      cat:'reputation', url: v=>`https://www.virustotal.com/gui/domain/${v.split('@')[1]}` },
+    { name:'EmailRep',      domain:'emailrep.io',         cat:'reputation', url: v=>`https://emailrep.io/${v}` },
+    { name:'HaveIBeenPwned',domain:'haveibeenpwned.com',  cat:'osint',      url: v=>`https://haveibeenpwned.com/account/${encodeURIComponent(v)}` },
+    { name:'Hunter.io',     domain:'hunter.io',           cat:'osint',      url: v=>`https://hunter.io/email-verifier/${v}` },
+    { name:'MXToolbox',     domain:'mxtoolbox.com',       cat:'email',      url: v=>`https://mxtoolbox.com/SuperTool.aspx?action=mx%3a${v.split('@')[1]}&run=toolpage` },
+    { name:'ThreatFox',     domain:'threatfox.abuse.ch',  cat:'intel',      url: v=>`https://threatfox.abuse.ch/browse.php?search=ioc%3A${v}` },
+  ],
+  cve: [
+    { name:'NVD NIST',       domain:'nvd.nist.gov',          cat:'official',   url: v=>`https://nvd.nist.gov/vuln/detail/${v}` },
+    { name:'CVE.org',        domain:'cve.org',               cat:'official',   url: v=>`https://www.cve.org/CVERecord?id=${v}` },
+    { name:'MITRE',          domain:'cve.mitre.org',         cat:'official',   url: v=>`https://cve.mitre.org/cgi-bin/cvename.cgi?name=${v}` },
+    { name:'Exploit-DB',     domain:'exploit-db.com',        cat:'exploit',    url: v=>`https://www.exploit-db.com/search?cve=${v.replace('CVE-','')}` },
+    { name:'Tenable',        domain:'tenable.com',           cat:'exploit',    url: v=>`https://www.tenable.com/cve/${v.toLowerCase()}` },
+    { name:'AttackerKB',     domain:'attackerkb.com',        cat:'exploit',    url: v=>`https://attackerkb.com/search?q=${v}` },
+    { name:'GitHub Advisory',domain:'github.com',            cat:'osint',      url: v=>`https://github.com/advisories?query=${v}` },
+    { name:'CIRCL CVE',      domain:'cve.circl.lu',          cat:'official',   url: v=>`https://cve.circl.lu/cve/${v}` },
+    { name:'VulnCheck',      domain:'vulncheck.com',         cat:'exploit',    url: v=>`https://vulncheck.com/browse/cve?search=${v}` },
+  ],
+};
+
+// ── Category metadata ───────────────────────────────────────
+const CAT_META = {
+  reputation: { label: 'Reputation',   cls: 'cat-reputation', badge: 'cat-badge-reputation' },
+  osint:      { label: 'OSINT',        cls: 'cat-osint',      badge: 'cat-badge-osint' },
+  intel:      { label: 'Threat Intel', cls: 'cat-intel',      badge: 'cat-badge-intel' },
+  sandbox:    { label: 'Sandbox',      cls: 'cat-sandbox',    badge: 'cat-badge-sandbox' },
+  official:   { label: 'Official',     cls: 'cat-official',   badge: 'cat-badge-official' },
+  exploit:    { label: 'Exploit',      cls: 'cat-exploit',    badge: 'cat-badge-exploit' },
+  email:      { label: 'Email',        cls: 'cat-email',      badge: 'cat-badge-email' },
+};
+
+// ── Type display ────────────────────────────────────────────
+const TYPE_META = {
+  ip:     { label: 'IP Address', color: 'rgba(96,165,250,.2)',  text: '#93c5fd',  border: 'rgba(96,165,250,.4)' },
+  domain: { label: 'Domain',     color: 'rgba(251,146,60,.2)',  text: '#fdba74',  border: 'rgba(251,146,60,.4)' },
+  url:    { label: 'URL',        color: 'rgba(192,132,252,.2)', text: '#d8b4fe',  border: 'rgba(192,132,252,.4)' },
+  hash:   { label: 'Hash',       color: 'rgba(74,222,128,.2)',  text: '#86efac',  border: 'rgba(74,222,128,.4)' },
+  email:  { label: 'Email',      color: 'rgba(250,204,21,.2)',  text: '#fde047',  border: 'rgba(250,204,21,.4)' },
+  cve:    { label: 'CVE',        color: 'rgba(248,113,113,.2)', text: '#fca5a5',  border: 'rgba(248,113,113,.4)' },
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let currentDetection = null;
+let activeFilter     = 'all';
+
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
+function renderDetection(det) {
+  const row = document.getElementById('detection-row');
+  if (!det) {
+    row.innerHTML = '<span class="text-xs text-slate-600">Paste any IOC above to get pivot links</span>';
+    return;
+  }
+  const m = TYPE_META[det.type];
+  const sub = det.sub ? ` <span class="opacity-60 font-normal">${det.sub.toUpperCase()}</span>` : '';
+  const refangNote = det.defanged
+    ? `<span class="text-xs text-amber-400/70 flex items-center gap-1"><span>⚡</span> Auto-refanged</span>` : '';
+  row.innerHTML = `
+    <span class="type-badge" style="background:${m.color};color:${m.text};border:1px solid ${m.border}">
+      ${m.label}${sub}
+    </span>
+    <span class="text-xs text-slate-500 font-mono truncate max-w-xs">${det.value}</span>
+    ${refangNote}
+  `;
+}
+
+function renderGrid(det) {
+  const grid = document.getElementById('platform-grid');
+
+  if (!det) {
+    grid.innerHTML = `
+      <div class="col-span-full empty-state">
+        <div class="empty-glow">🔭</div>
+        <p class="text-sm font-medium text-slate-500 mb-1">No IOC yet</p>
+        <p class="text-xs text-slate-600">Paste an IP, domain, hash, URL, email or CVE above</p>
+        <div class="mt-6 flex flex-wrap justify-center gap-2">
+          <button class="example-btn cat-tab" data-val="185.220.101.45">185.220.101.45</button>
+          <button class="example-btn cat-tab" data-val="evil.ru">evil.ru</button>
+          <button class="example-btn cat-tab" data-val="CVE-2024-21887">CVE-2024-21887</button>
+          <button class="example-btn cat-tab" data-val="44d88612fea8a8f36de82e1278abb02f">MD5 hash</button>
+          <button class="example-btn cat-tab" data-val="attacker@phish.net">attacker@phish.net</button>
+        </div>
+      </div>`;
+    bindExamples();
+    return;
+  }
+
+  const platforms = PLATFORMS[det.type] || [];
+  const filtered  = activeFilter === 'all' ? platforms : platforms.filter(p => p.cat === activeFilter);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-600 text-sm">No platforms in this category</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((p, i) => {
+    const meta  = CAT_META[p.cat];
+    const href  = p.url(det.value, det.sub);
+    const delay = Math.min(i * 30, 200);
+    return `
+      <div class="platform-card ${meta.cls}" style="animation-delay:${delay}ms">
+        <div class="platform-favicon">
+          <img src="https://www.google.com/s2/favicons?domain=${p.domain}&sz=32"
+               onerror="this.parentNode.textContent='🔗'" loading="lazy" alt="">
+        </div>
+        <div class="flex flex-col gap-1 min-w-0">
+          <span class="platform-name">${p.name}</span>
+          <span class="platform-cat ${meta.badge}">${meta.label}</span>
+        </div>
+        <a href="${href}" target="_blank" rel="noopener noreferrer" class="open-btn">
+          Open <span style="font-size:10px">↗</span>
+        </a>
+      </div>`;
+  }).join('');
+}
+
+function renderActions(det) {
+  const openAll  = document.getElementById('open-all-btn');
+  const copyBtn  = document.getElementById('copy-btn');
+  const label    = document.getElementById('open-all-label');
+
+  if (!det) {
+    openAll.disabled = true;
+    label.textContent = 'Open all platforms';
+    copyBtn.style.display = 'none';
+    return;
+  }
+  const platforms = PLATFORMS[det.type] || [];
+  const filtered  = activeFilter === 'all' ? platforms : platforms.filter(p => p.cat === activeFilter);
+  openAll.disabled = filtered.length === 0;
+  label.textContent = `Open all ${filtered.length} platforms`;
+  copyBtn.style.display = 'inline-flex';
+}
+
+// ═══════════════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════════════
+function openAll() {
+  if (!currentDetection) return;
+  const platforms = PLATFORMS[currentDetection.type] || [];
+  const filtered  = activeFilter === 'all' ? platforms : platforms.filter(p => p.cat === activeFilter);
+  filtered.forEach(p => window.open(p.url(currentDetection.value, currentDetection.sub), '_blank', 'noopener'));
+  toast(`Opened ${filtered.length} tabs`);
+}
+
+function copyIOC() {
+  if (!currentDetection) return;
+  navigator.clipboard.writeText(currentDetection.value)
+    .then(() => toast('IOC copied!'));
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.cat === cat);
+  });
+  renderGrid(currentDetection);
+  renderActions(currentDetection);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function bindExamples() {
+  document.querySelectorAll('.example-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById('ioc-input');
+      input.value = btn.dataset.val;
+      input.dispatchEvent(new Event('input'));
+      input.focus();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN INPUT HANDLER
+// ═══════════════════════════════════════════════════════════
+function onInput() {
+  const raw = document.getElementById('ioc-input').value.trim();
+  document.getElementById('clear-btn').classList.toggle('hidden', !raw);
+
+  currentDetection = raw ? detect(raw) : null;
+  activeFilter     = 'all';
+
+  renderDetection(currentDetection);
+  renderGrid(currentDetection);
+  renderActions(currentDetection);
+
+  // Update URL param silently
+  const url = new URL(location.href);
+  if (raw) url.searchParams.set('ioc', raw); else url.searchParams.delete('ioc');
+  history.replaceState(null, '', url);
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  const input   = document.getElementById('ioc-input');
+  const clearBtn = document.getElementById('clear-btn');
+  const openAllBtn = document.getElementById('open-all-btn');
+  const copyBtn = document.getElementById('copy-btn');
+
+  input.addEventListener('input', onInput);
+  clearBtn.addEventListener('click', () => { input.value = ''; onInput(); input.focus(); });
+  openAllBtn.addEventListener('click', openAll);
+  copyBtn.addEventListener('click', copyIOC);
+
+  // Keyboard shortcut: Enter → open all
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') openAll();
+  });
+
+  // URL param init
+  const param = new URLSearchParams(location.search).get('ioc');
+  if (param) {
+    input.value = param;
+    onInput();
+  } else {
+    bindExamples();
+    renderGrid(null);
+  }
+
+  // Focus
+  input.focus();
+});
+</script>
+</body>
+</html>
